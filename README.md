@@ -6,6 +6,13 @@ The first char is `你` (which has double console width)
 
 When using `WriteConsoleOutputW` from `kernel32.dll` we are advised to use a 'skip' char after the wide one.
 
+The test cases are as follows
+
+| Test Case | Written |
+|:---------:|:--------:|
+| `' '`| `['你', ' ', 'c','d']` |
+| `'\0'`| `['你', '\0', 'c','d']` |
+| &lt;none&gt; | `['你', 'c','d']` |
 
 |     Terminal     |    `' '`   | `'\0'`  | &lt;none&gt; |
 |:----------------:|:----------:|-------------|-----|
