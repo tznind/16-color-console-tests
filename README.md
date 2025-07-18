@@ -14,6 +14,8 @@ The test cases are as follows
 | `'\0'`| `['你', '\0', 'c','d']` |
 | &lt;none&gt; | `['你', 'c','d']` |
 
+Results:
+
 |     Terminal     |    `' '`   | `'\0'`  | &lt;none&gt; |
 |:----------------:|:----------:|-------------|-----|
 | Alacritty        |    <img width="40" height="33" alt="image" src="https://github.com/user-attachments/assets/3b8e67c2-7c3e-445e-a55f-167b16e353a4" />    |    <img width="32" height="32" alt="image" src="https://github.com/user-attachments/assets/0f505417-13cd-4358-beaf-79c83bbd0243" /> | <img width="32" height="32" alt="image" src="https://github.com/user-attachments/assets/073f7d7f-701e-48f2-b806-43a96ee206a3" /> |
