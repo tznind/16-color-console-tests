@@ -1,47 +1,59 @@
-﻿
+
 using System.Runtime.InteropServices;
 
 
 const int STD_OUTPUT_HANDLE = -11;
 const int STD_INPUT_HANDLE = -10;
 
-Console.Write("Choose your char: 1 for space 2 for \\0");
-bool useSpace = Console.Read() == '1';
+Console.WriteLine("Choose your option:");
+Console.WriteLine("1: ' '");
+Console.WriteLine("2: '\\0'");
+Console.WriteLine("3: <none>");
+
+var read = Console.Read(); 
 
 var _inputHandle = InteropServices.GetStdHandle (STD_INPUT_HANDLE);
 var _outputHandle = InteropServices.GetStdHandle (STD_OUTPUT_HANDLE);
 
-CharInfo[] ci = new CharInfo[4];
 
-
-ci [0] = new CharInfo
-{
-    Char = new CharUnion { UnicodeChar = '你' },
-    Attributes = 47
+var ci = new List<CharInfo>{
+    new CharInfo
+    {
+        Char = new CharUnion { UnicodeChar = '你' },
+        Attributes = 47
+    },
+    new CharInfo
+    {
+        Char = new CharUnion { UnicodeChar = 'c' },
+        Attributes = 47
+    },
+    new CharInfo
+    {
+        Char = new CharUnion { UnicodeChar = 'd' },
+        Attributes = 47
+    }
 };
-ci [1] = new CharInfo
+
+if (read == '1')
 {
-    Char = new CharUnion { UnicodeChar = useSpace? ' ':'\0' },
-    Attributes = 47
-};
-ci [2] = new CharInfo
+    ci.Insert(1, new CharInfo
+    {
+        Char = new CharUnion { UnicodeChar = ' ' },
+        Attributes = 47
+    });
+}
+else if(read == '2')
 {
-    Char = new CharUnion { UnicodeChar = 'c' },
-    Attributes = 47
-};
-ci [3] = new CharInfo
-{
-    Char = new CharUnion { UnicodeChar = 'd' },
-    Attributes = 47
-};
-var window = new SmallRect(0, 0, 10, 10);
+    ci.Insert(1, new CharInfo
+    {
+        Char = new CharUnion { UnicodeChar = '\0' },
+        Attributes = 47
+    });
+}
 
-InteropServices.WriteConsoleOutput ( _outputHandle, ci, new Coord(4, 1), new Coord { X = 0, Y = 0 }, ref window);
+var window = new SmallRect(0, 0, (short)(ci.Count - 1), 0);
 
-// Console.WriteLine("你");
-
-
-
+InteropServices.WriteConsoleOutput ( _outputHandle, ci.ToArray(), new Coord((short)ci.Count, 1), new Coord { X = 0, Y = 0 }, ref window);
 
 [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 public struct CharUnion
