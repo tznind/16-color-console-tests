@@ -13,6 +13,7 @@ The test cases are as follows
 | `' '`| `['你', ' ', 'c','d']` |
 | `'\0'`| `['你', '\0', 'c','d']` |
 | &lt;none&gt; | `['你', 'c','d']` |
+| modern | Uses `WriteConsoleW` and `SetConsoleTextAttribute` instead (write as string) |
 
 Results:
 
