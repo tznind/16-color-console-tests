@@ -9,10 +9,10 @@ Console.WriteLine("Choose your option:");
 Console.WriteLine("1: ' '");
 Console.WriteLine("2: '\\0'");
 Console.WriteLine("3: <none>");
+Console.WriteLine("4: modern");
 
 var read = Console.Read(); 
 
-var _inputHandle = InteropServices.GetStdHandle (STD_INPUT_HANDLE);
 var _outputHandle = InteropServices.GetStdHandle (STD_OUTPUT_HANDLE);
 
 
@@ -50,10 +50,24 @@ else if(read == '2')
         Attributes = 47
     });
 }
+else if (read == '4')
+{
+    // Save original attribute
+    InteropServices.GetConsoleScreenBufferInfo(_outputHandle, out var info);
+    ushort originalAttr = info.wAttributes;
+    
+    InteropServices.SetConsoleCursorPosition(_outputHandle, new Coord(0, 0));
+    InteropServices.SetConsoleTextAttribute(_outputHandle, 47);
+    InteropServices.WriteConsoleW(_outputHandle, "你cde", 4, out _, nint.Zero);
+
+    // Restore original attribute
+    InteropServices.SetConsoleTextAttribute(_outputHandle, originalAttr);
+    return;
+}
 
 var window = new SmallRect(0, 0, (short)(ci.Count - 1), 0);
 
-InteropServices.WriteConsoleOutput ( _outputHandle, ci.ToArray(), new Coord((short)ci.Count, 1), new Coord { X = 0, Y = 0 }, ref window);
+InteropServices.WriteConsoleOutputW ( _outputHandle, ci.ToArray(), new Coord((short)ci.Count, 1), new Coord { X = 0, Y = 0 }, ref window);
 
 [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
 public struct CharUnion
@@ -127,11 +141,11 @@ public struct CharUnion
     }
 
 
-class InteropServices {
+partial class InteropServices {
 
-
+    // Very old method:
     [DllImport("kernel32.dll", EntryPoint = "WriteConsoleOutputW", SetLastError = true, CharSet = CharSet.Unicode)]
-    public static extern bool WriteConsoleOutput(
+    public static extern bool WriteConsoleOutputW(
         nint hConsoleOutput,
         CharInfo[] lpBuffer,
         Coord dwBufferSize,
@@ -141,4 +155,36 @@ class InteropServices {
     
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern nint GetStdHandle (int nStdHandle);
+
+    // More modern method:
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool SetConsoleCursorPosition(nint hConsoleOutput, Coord dwCursorPosition);
+
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool SetConsoleTextAttribute(nint hConsoleOutput, ushort wAttributes);
+
+    [LibraryImport("kernel32.dll", EntryPoint = "WriteConsoleW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool WriteConsoleW(
+        nint hConsoleOutput,
+        ReadOnlySpan<char> lpbufer,
+        uint NumberOfCharsToWriten,
+        out uint lpNumberOfCharsWritten,
+        nint lpReserved
+    );
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool GetConsoleScreenBufferInfo(nint hConsoleOutput, out CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CONSOLE_SCREEN_BUFFER_INFO
+    {
+        public Coord dwSize;
+        public Coord dwCursorPosition;
+        public ushort wAttributes;
+        public SmallRect srWindow;
+        public Coord dwMaximumWindowSize;
+    }
+
 }
