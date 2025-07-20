@@ -58,7 +58,7 @@ else if (read == '4')
     
     InteropServices.SetConsoleCursorPosition(_outputHandle, new Coord(0, 0));
     InteropServices.SetConsoleTextAttribute(_outputHandle, 47);
-    InteropServices.WriteConsoleW(_outputHandle, "你cde", 4, out _, nint.Zero);
+    InteropServices.WriteConsoleW(_outputHandle, "你cd", 3, out _, nint.Zero);
 
     // Restore original attribute
     InteropServices.SetConsoleTextAttribute(_outputHandle, originalAttr);
